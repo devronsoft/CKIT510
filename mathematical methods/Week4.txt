@@ -1,0 +1,203 @@
+
+package week4;
+
+import javax.swing.JOptionPane;
+
+public class Week4RRS {
+
+    public static void main(String[] args) {
+        Interface activeGui = new Interface();
+        Validate activeValid = new Validate();
+        Computations ProcObj = new Computations();
+        int validation;
+        
+        validation = activeValid.validate(activeGui.getInput());
+        // Use interface and validation classes to check input and raise necessary error messages
+        
+        if (validation == 0) {
+            String mainInput = activeGui.userInput;
+            String threeNumbs;
+            int stringIndex = 0, asInt;
+            
+          while (stringIndex != -1) {
+                threeNumbs = mainInput.substring(0, Math.min(mainInput.length(), 3));
+                stringIndex = mainInput.indexOf(' ');
+                mainInput = mainInput.substring(stringIndex + 1);
+                try {
+                    asInt = Integer.parseInt(threeNumbs);
+                    ProcObj.calc(asInt);
+                  
+                    if (asInt >= 100 && asInt <= 199) {
+                        break;
+                    }
+             
+                    JOptionPane.showMessageDialog (null, asInt + ":\n" + String.format("1:%03d", ProcObj.saveResult[1]) + " " + String.format("2:%03d", ProcObj.saveResult[2]) + " " + String.format("3:%03d", ProcObj.saveResult[3]) + " " + String.format("4:%03d", ProcObj.saveResult[4]) + " " + String.format("5:%03d", ProcObj.saveResult[5]) + " " + String.format("6:%03d", ProcObj.saveResult[6]) + " " + String.format("7:%03d", ProcObj.saveResult[7]) + " " + String.format("8:%03d", ProcObj.saveResult[8]) + " " + String.format("9:%03d", ProcObj.saveResult[9]), "Computed Output", JOptionPane.INFORMATION_MESSAGE);
+                
+                
+                
+                } catch (Exception x) {
+                }
+            }
+        } else if (validation == -1) {
+            activeGui.showValidationAlert("Wrong space format!");
+        } else if (validation == -2) {
+            activeGui.showValidationAlert("Invalid input format");
+        } else if (validation == -3) {
+            activeGui.showValidationAlert("0xx instruction format is not allowed!");
+        } else if (validation == -4) {
+            activeGui.showValidationAlert("Negative instruction is not allowed!");
+        }
+
+    }
+
+}
+
+
+class Validate {
+
+    String inputString;
+    String threeNumbs;
+    String parStr;
+    String numeric;
+    int stringIndex;
+    int bin;
+    int asInt;
+
+    public int validate(String loc) {
+        inputString = loc;
+        stringIndex = inputString.indexOf(' ');
+        parStr = inputString;
+        
+        //set binary flag to 0 unless failure conditions met below
+        bin = 0;
+
+        
+        // Use indexof to determine location of spaces for validity            
+        while (stringIndex != -1) {
+            threeNumbs = parStr.substring(0, Math.min(parStr.length(), 3));
+            stringIndex = parStr.indexOf(' ');
+            if (stringIndex % 3 != 0 && stringIndex != -1) {
+                bin = -1;
+                break;
+            }//incorrect spacing
+            try {
+                asInt = Integer.parseInt(threeNumbs);
+                } catch (Exception e) {
+                bin = -2;
+                break;
+            }//input cannot be parsed
+            if (asInt >= 0 && asInt <= 99) {
+                bin = -3;//unsupported sequence
+            }
+            if (asInt < 0) {
+                bin = -4;//negative numbers
+            }
+            parStr = parStr.substring(stringIndex + 1);
+        }
+        
+        
+        //return integer to the main method to determine how to proceed  
+        return bin;
+        
+    }
+
+}
+
+class Interface {
+
+    String userInput;
+
+    // collect instruction string in required format from user
+    String getInput() {
+        userInput = JOptionPane.showInputDialog(
+                null,
+                "Please enter a number sequence in the form of one long string with spaces - for example: 275 226 373 426 692 672 100",
+                "Instructions",
+                JOptionPane.QUESTION_MESSAGE 
+        );
+        return userInput;
+    }
+
+    void showValidationAlert(String msg) {
+        JOptionPane.showConfirmDialog(
+                null,
+                msg,
+                "Validation Alert",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+}
+
+// class & constructor to perform mathematical calcs
+class Computations {
+    int countArray;
+    int[] saveResult = new int[10];
+    int num1;
+    int num2;
+    int num3;
+
+    // loop for 10
+    Computations() {
+        countArray = 1;
+        while (countArray < 10) {
+            saveResult[countArray] = 0;
+            countArray += 1;
+
+        }
+    }
+
+    int[] calc(int sequence) {
+        if (sequence >= 200 && sequence <= 299) {
+            num1 = sequence % 10; //get no 1
+            num2 = sequence / 10 % 10;// get no 2
+            num3 = sequence / 100 % 10;// get no 3
+            saveResult[num2] = num1 % 1000;//ensure result within 1000 limitation
+            return saveResult;
+        } else if (sequence >= 300 && sequence <= 399) {
+            num1 = sequence % 10;
+            num2 = sequence / 10 % 10;
+            num3 = sequence / 100 % 10;
+            saveResult[num2] = (saveResult[num2] + num1) % 1000;
+            return saveResult;
+        } else if (sequence >= 400 && sequence <= 499) {
+            num1 = sequence % 10;
+            num2 = sequence / 10 % 10;
+            num3 = sequence / 100 % 10;
+            saveResult[num2] = (saveResult[num2] * num1) % 1000;
+            return saveResult;
+        } else if (sequence >= 500 && sequence <= 599) {
+            num1 = sequence % 10;
+            num2 = sequence / 10 % 10;
+            num3 = sequence / 100 % 10;
+            saveResult[num2] = (num1 / num2) % 1000;
+            return saveResult;
+        } else if (sequence >= 600 && sequence <= 699) {
+            num1 = sequence % 10;
+            num2 = sequence / 10 % 10;
+            num3 = sequence / 100 % 10;
+            saveResult[num2] = saveResult[num1] % 1000;
+            return saveResult;
+        } else if (sequence >= 700 && sequence <= 799) {
+            num1 = sequence % 10;
+            num2 = sequence / 10 % 10;
+            num3 = sequence / 100 % 10;
+            saveResult[num2] = (saveResult[num1] + saveResult[num2]) % 1000;
+            return saveResult;
+        } else if (sequence >= 800 && sequence <= 899) {
+            num1 = sequence % 10;
+            num2 = sequence / 10 % 10;
+            num3 = sequence / 100 % 10;
+            saveResult[num2] = ((int) Math.sqrt(num2 + 1)) % 1000;
+            return saveResult;
+        } else if (sequence >= 900 && sequence <= 999) {
+            num1 = sequence % 10;
+            num2 = sequence / 10 % 10;
+            num3 = sequence / 100 % 10;
+            saveResult[num2] = ((int) Math.pow(saveResult[num2 + 1], num1)) % 1000;
+            return saveResult;
+        }
+        return saveResult;
+    }
+
+}
+

@@ -1,4 +1,7 @@
-The requirements of this program are as follows:
+This Java program is a basic repository of animal behaviours. 
+To demonstrate the use of interfaces I use the selection of the user to drive the display of behavioural information for a particular animal.
+
+The requirements of this program were as follows:
 
 - Implement at least four classes (showing inheritance) with suitable constructors and methods to set/retrieve values of/from the properties.
 - Try to catch all specific exceptions instead of catching them through the parent Exception class. You can also implement your own exception-handling classes as well.

@@ -1,0 +1,100 @@
+
+import javax.swing.JOptionPane;
+
+public class FreeTimeScheduler{
+    int iStartHour, iEndHour, iStartMinute, iEndMinute;
+    int iPreviousNapEndHour, iPreviousNapEndMinute;
+    int iLongestNapHour, iLongestNapMinute, iLongestNapMinutes;
+    int iLongestNapStartHour, iLongestNapStartMinute;
+    int iFreeTimeHour, iFreeTimeMinute, iFreeTimeMinutes;
+    int iTotalNapHour, iTotalNapMinute, iTotalNapMinutes;
+    String strTime1, strTime2, strDescription;
+            
+    public FreeTimeScheduler () {
+        iPreviousNapEndHour = 9;
+        iPreviousNapEndMinute = 0;
+        strTime1 = "";
+        strTime2 = "";
+        strDescription = "";
+    }
+    
+    public void getSchedule(){
+        while (JOptionPane.showConfirmDialog(null, "Do you want to add more appointment?", "Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            strTime1 = getInput("Starting time", "Enter starting time of an appointment in the format HH:MM");
+            strTime2 = getInput("Ending time", "Enter ending time of an appointment in the format HH:MM");
+            strDescription = getInput("Description", "Enter description of an appointment");
+
+            iStartHour = Integer.parseInt(strTime1.substring(0, strTime1.indexOf(':')));
+            iStartMinute = Integer.parseInt(strTime1.substring(strTime1.indexOf(':') + 1));
+            iEndHour = Integer.parseInt(strTime2.substring(0, strTime2.indexOf(':')));
+            iEndMinute = Integer.parseInt(strTime2.substring(strTime2.indexOf(':') + 1));
+
+            // ensure that start time is between 9:00 and 17:00
+            if (iStartHour >= 9 && (iStartHour < 17 || iStartHour == 17 && iStartMinute==0)) {
+                // ensure that end time is between 9:00 and 17:00
+                if (iEndHour >= iStartHour && (iEndHour < 17 || iEndHour==17 && iEndMinute==0)) {
+                    calculateNap ();
+                } else {
+                    System.out.println("Ending time should be greater than or equal to 09:00 and less than or equal to 17:00");
+                }
+            } else {
+                System.out.println("Starting time should be greater than or equal to 09:00 and less than or equal to 17:00");
+            }
+        }
+
+        // add information about dummy appointment at 17:00 hours so that free time between last appointment and 17:00 can also checked for the longest nap
+        iStartHour = 17;
+        iStartMinute = 0;
+        iEndHour = 17;
+        iEndMinute = 0;
+        calculateNap();
+
+    }
+    
+    public void printOutput(){
+        System.out.println("Total free time during whole day is " + iTotalNapHour + " hours and " + iTotalNapMinute + " minutes");
+        System.out.println("You can take longest nap at: " + iLongestNapStartHour  + ":" + iLongestNapStartMinute + " and it will last for " + iLongestNapHour + " hours and " + iLongestNapMinute + " minutes");
+    }
+
+    public void calculateNap () {
+        if ( ((iStartHour * 60) + iStartMinute) >= ((iPreviousNapEndHour * 60) + iPreviousNapEndMinute) ) {
+            iFreeTimeMinutes = ((iStartHour * 60) + iStartMinute) - ((iPreviousNapEndHour * 60) + iPreviousNapEndMinute);
+            iFreeTimeHour = iFreeTimeMinutes / 60;
+            iFreeTimeMinute = iFreeTimeMinutes % 60;
+
+            if (iFreeTimeMinutes > iLongestNapMinutes) {
+                iLongestNapMinutes = iFreeTimeMinutes;
+                iLongestNapHour = iLongestNapMinutes / 60;
+                iLongestNapMinute = iLongestNapMinutes % 60;
+
+                iLongestNapStartHour = iPreviousNapEndHour;
+                iLongestNapStartMinute = iPreviousNapEndMinute;
+            }
+        }
+
+        iTotalNapMinutes += iFreeTimeMinutes;
+        iTotalNapHour = iTotalNapMinutes / 60;
+        iTotalNapMinute = iTotalNapMinutes % 60;
+
+        iPreviousNapEndHour = iEndHour;
+        iPreviousNapEndMinute = iEndMinute;
+    }
+    
+    public String getInput( String strTitle, String strMessage ) {
+        String strInput = JOptionPane.showInputDialog(null, strMessage, strTitle);
+        return strInput;
+    }
+}
+
+
+
+
+public class Week3HIA {
+    
+    public static void main (String args[]) {
+        FreeTimeScheduler myScheduler=new FreeTimeScheduler();
+        myScheduler.getSchedule();
+        myScheduler.printOutput();
+    }
+    
+}
